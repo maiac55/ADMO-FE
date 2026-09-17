@@ -8,6 +8,9 @@ React Native / Expo frontend reconstructed from the ADMO visual references.
 - Create account
 - Reset password
 - Account-created confirmation
+- Connect Box
+- Box profile
+- Box added succesfully
 - Responsive safe-area-aware layouts
 - Reusable inputs, buttons, logo, background and navigation
 - Placeholder routes for the next ADMO screens
