@@ -37,7 +37,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Schedule" component={ScheduleScreen} />
-        <Stack.Screen name="Persons" component={PlaceholderScreen} />
+        <Stack.Screen name="Medications" component={ScheduleScreen} />
         <Stack.Screen name="History" component={PlaceholderScreen} />
         <Stack.Screen name="Profile" component={PlaceholderScreen} />
       </Stack.Navigator>
