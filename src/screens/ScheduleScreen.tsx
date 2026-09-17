@@ -22,7 +22,7 @@ const meds = [
 
 export function ScheduleScreen({ navigation }: Props) {
   const [selectedDay, setSelectedDay] = useState(0);
-  const navigateTab = (tab: 'Home' | 'Persons' | 'History' | 'Profile') => navigation.navigate(tab);
+  const navigateTab = (tab: 'Home' | 'Medications' | 'History' | 'Profile') => navigation.navigate(tab);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -62,7 +62,7 @@ export function ScheduleScreen({ navigation }: Props) {
             ))}
           </View>
         </ScrollView>
-        <BottomNav active="Home" onNavigate={navigateTab} />
+        <BottomNav active="Medications" onNavigate={navigateTab} />
       </View>
     </SafeAreaView>
   );
