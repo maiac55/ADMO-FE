@@ -11,6 +11,9 @@ import { AccountCreatedScreen } from './src/screens/AccountCreatedScreen';
 import { ConnectBoxScreen } from './src/screens/ConnectBoxScreen';
 import { PersonInfoScreen } from './src/screens/PersonInfoScreen';
 import { BoxAddedScreen } from './src/screens/BoxAddedScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { NotificationsScreen } from './src/screens/NotificationsScreen';
+import { ScheduleScreen } from './src/screens/ScheduleScreen';
 import { PlaceholderScreen } from './src/screens/PlaceholderScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -19,7 +22,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <StatusBar style="dark" />
-      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false, animation: 'fade' }}>
+      <Stack.Navigator
+        initialRouteName="Splash"
+        screenOptions={{ headerShown: false, animation: 'fade' }}
+      >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
@@ -28,7 +34,12 @@ export default function App() {
         <Stack.Screen name="ConnectBox" component={ConnectBoxScreen} />
         <Stack.Screen name="PersonInfo" component={PersonInfoScreen} />
         <Stack.Screen name="BoxAdded" component={BoxAddedScreen} />
-        <Stack.Screen name="Home" component={PlaceholderScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Schedule" component={ScheduleScreen} />
+        <Stack.Screen name="Persons" component={PlaceholderScreen} />
+        <Stack.Screen name="History" component={PlaceholderScreen} />
+        <Stack.Screen name="Profile" component={PlaceholderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
