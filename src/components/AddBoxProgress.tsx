@@ -29,7 +29,7 @@ export function AddBoxProgress({ step }: { step: 1 | 2 | 3 }) {
 
 const s = StyleSheet.create({
   wrap: { marginTop: 10, marginBottom: 22, position: 'relative' },
-  line: { position: 'absolute', top: 10, left: '16%', right: '16%', height: 1.5, backgroundColor: '#D7DEE3' },
+  line: { position: 'absolute', top: 10, left: '16%', right: '16%', height: 1.5, backgroundColor: '#FBFCFD' },
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   item: { width: '33.33%', alignItems: 'center' },
   circle: { width: 21, height: 21, borderRadius: 11, backgroundColor: '#D7DEE3', alignItems: 'center', justifyContent: 'center' },
