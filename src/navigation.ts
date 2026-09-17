@@ -8,4 +8,9 @@ export type RootStackParamList = {
   PersonInfo: undefined;
   BoxAdded: { name: string; age: string; note: string };
   Home: undefined;
+  Notifications: undefined;
+  Schedule: undefined;
+  Persons: undefined;
+  History: undefined;
+  Profile: undefined;
 };
