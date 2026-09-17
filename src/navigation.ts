@@ -10,7 +10,7 @@ export type RootStackParamList = {
   Home: undefined;
   Notifications: undefined;
   Schedule: undefined;
-  Persons: undefined;
+  Medications: undefined;
   History: undefined;
   Profile: undefined;
 };
