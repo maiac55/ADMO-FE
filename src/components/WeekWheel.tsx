@@ -1,12 +1,14 @@
-import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import Svg, { Path, Text as SvgText } from 'react-native-svg';
+import React, { useState } from 'react';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+import Svg, { Circle, Defs, G, Path, RadialGradient, Stop, Text as SvgText } from 'react-native-svg';
 
 const DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-const SIZE = 270;
+const SIZE = 286;
 const CENTER = SIZE / 2;
-const INNER = 64;
-const OUTER = 126;
+const INNER = 68;
+const OUTER = 132;
+const SLICE = 360 / DAYS.length;
+const GAP = 2.6;
 
 function point(radius: number, angle: number) {
   const rad = ((angle - 90) * Math.PI) / 180;
@@ -17,92 +19,153 @@ function point(radius: number, angle: number) {
 }
 
 function segmentPath(index: number) {
-  const slice = 360 / 7;
-  const gap = 1.6;
-  const start = index * slice + gap;
-  const end = (index + 1) * slice - gap;
-  const a = point(OUTER, start);
-  const b = point(OUTER, end);
-  const c = point(INNER, end);
-  const d = point(INNER, start);
+  const start = index * SLICE + GAP;
+  const end = (index + 1) * SLICE - GAP;
+
+  const outerStart = point(OUTER, start);
+  const outerEnd = point(OUTER, end);
+  const innerEnd = point(INNER, end);
+  const innerStart = point(INNER, start);
 
   return [
-    `M ${a.x} ${a.y}`,
-    `A ${OUTER} ${OUTER} 0 0 1 ${b.x} ${b.y}`,
-    `L ${c.x} ${c.y}`,
-    `A ${INNER} ${INNER} 0 0 0 ${d.x} ${d.y}`,
+    `M ${outerStart.x} ${outerStart.y}`,
+    `A ${OUTER} ${OUTER} 0 0 1 ${outerEnd.x} ${outerEnd.y}`,
+    `L ${innerEnd.x} ${innerEnd.y}`,
+    `A ${INNER} ${INNER} 0 0 0 ${innerStart.x} ${innerStart.y}`,
     'Z',
   ].join(' ');
 }
 
 export function WeekWheel() {
-  return (
-    <View style={styles.wrap}>
-      <Svg width={SIZE} height={SIZE}>
-        {DAYS.map((day, index) => {
-          const slice = 360 / 7;
-          const label = point(95, index * slice + slice / 2);
-          const fill = index < 3 ? '#079A99' : index === 3 ? '#BCEBE8' : '#FFFFFF';
-          const textColor = index < 3 ? '#FFFFFF' : '#073B67';
+  const [selectedDay, setSelectedDay] = useState(0);
 
+  return (
+    <View style={styles.outerShadow}>
+      <View style={styles.wrap}>
+        <Svg width={SIZE} height={SIZE}>
+          <Defs>
+            <RadialGradient id="centerGlow" cx="50%" cy="45%" rx="60%" ry="60%">
+              <Stop offset="0%" stopColor="#FFFFFF" />
+              <Stop offset="100%" stopColor="#F6FAFB" />
+            </RadialGradient>
+          </Defs>
+
+          <Circle
+            cx={CENTER}
+            cy={CENTER}
+            r={OUTER + 2}
+            fill="#F9FBFC"
+            stroke="#EDF2F4"
+            strokeWidth={1}
+          />
+
+          <G>
+            {DAYS.map((day, index) => {
+              const selected = selectedDay === index;
+              const label = point(101, index * SLICE + SLICE / 2);
+
+              return (
+                <React.Fragment key={day}>
+                  <Path
+                    d={segmentPath(index)}
+                    fill={selected ? '#079C9A' : '#FFFFFF'}
+                    stroke={selected ? '#079C9A' : '#E7EEF1'}
+                    strokeWidth={1.4}
+                  />
+
+                  <SvgText
+                    x={label.x}
+                    y={label.y + 5}
+                    textAnchor="middle"
+                    fontSize={15}
+                    fontWeight="700"
+                    fill={selected ? '#FFFFFF' : '#123F69'}
+                  >
+                    {day}
+                  </SvgText>
+                </React.Fragment>
+              );
+            })}
+          </G>
+
+          <Circle
+            cx={CENTER}
+            cy={CENTER}
+            r={INNER - 3}
+            fill="url(#centerGlow)"
+            stroke="#E8EFF1"
+            strokeWidth={1.5}
+          />
+        </Svg>
+
+        {DAYS.map((day, index) => {
+          const hit = point(101, index * SLICE + SLICE / 2);
           return (
-            <React.Fragment key={day}>
-              <Path
-                d={segmentPath(index)}
-                fill={fill}
-                stroke="#E7EEF1"
-                strokeWidth={1.5}
-              />
-              <SvgText
-                x={label.x}
-                y={label.y + 5}
-                textAnchor="middle"
-                fontSize={15}
-                fontWeight="700"
-                fill={textColor}
-              >
-                {day}
-              </SvgText>
-            </React.Fragment>
+            <Pressable
+              key={`hit-${day}`}
+              accessibilityRole="button"
+              accessibilityLabel={`Select ${day}`}
+              onPress={() => setSelectedDay(index)}
+              style={[
+                styles.hitArea,
+                {
+                  left: hit.x - 31,
+                  top: hit.y - 31,
+                },
+              ]}
+            />
           );
         })}
-      </Svg>
 
-      <View style={styles.center}>
-        <Image
-          source={require('../../assets/admo-logo.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <View pointerEvents="none" style={styles.center}>
+          <Image
+            source={require('../../assets/admo-logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
+  outerShadow: {
     width: SIZE,
     height: SIZE,
     alignSelf: 'center',
-    marginVertical: 4,
-    shadowColor: '#78909C',
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 5 },
+    marginVertical: 8,
+    borderRadius: SIZE / 2,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#506A78',
+    shadowOpacity: 0.16,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 7,
+  },
+  wrap: {
+    width: SIZE,
+    height: SIZE,
+    borderRadius: SIZE / 2,
+  },
+  hitArea: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
   },
   center: {
     position: 'absolute',
-    left: CENTER - INNER + 4,
-    top: CENTER - INNER + 4,
-    width: INNER * 2 - 8,
-    height: INNER * 2 - 8,
+    left: CENTER - INNER + 7,
+    top: CENTER - INNER + 7,
+    width: (INNER - 7) * 2,
+    height: (INNER - 7) * 2,
     borderRadius: INNER,
-    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logo: {
-    width: 92,
-    height: 52,
+    width: 100,
+    height: 58,
   },
 });
