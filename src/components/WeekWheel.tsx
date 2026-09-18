@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Image, ImageSourcePropType, Pressable, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
 
-const DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] as const;
+const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
 type Day = (typeof DAYS)[number];
 
 const WHEELS: Record<Day, ImageSourcePropType> = {
@@ -15,51 +15,21 @@ const WHEELS: Record<Day, ImageSourcePropType> = {
 };
 
 const SIZE = 300;
-const CENTER = SIZE / 2;
-const HIT_RADIUS = 105;
-const SLICE = 360 / DAYS.length;
-
-function point(radius: number, angle: number) {
-  const rad = ((angle - 90) * Math.PI) / 180;
-  return {
-    x: CENTER + radius * Math.cos(rad),
-    y: CENTER + radius * Math.sin(rad),
-  };
-}
 
 export function WeekWheel() {
-  const [selectedDay, setSelectedDay] = useState<Day>('Th');
+  // getDay() uses the device's local calendar:
+  // 0 = Sunday, 1 = Monday, ... 6 = Saturday.
+  const today: Day = DAYS[new Date().getDay()];
 
   return (
     <View style={styles.wrap}>
       <Image
-        source={WHEELS[selectedDay]}
+        source={WHEELS[today]}
         style={styles.wheel}
         resizeMode="contain"
         fadeDuration={0}
+        accessibilityLabel={`${today} is today's selected medication day`}
       />
-
-      {DAYS.map((day, index) => {
-        // Mo is centered exactly at 12 o'clock, then days continue clockwise.
-        const hit = point(HIT_RADIUS, index * SLICE);
-
-        return (
-          <Pressable
-            key={day}
-            accessibilityRole="button"
-            accessibilityLabel={`Select ${day}`}
-            onPress={() => setSelectedDay(day)}
-            hitSlop={4}
-            style={[
-              styles.hitArea,
-              {
-                left: hit.x - 30,
-                top: hit.y - 30,
-              },
-            ]}
-          />
-        );
-      })}
     </View>
   );
 }
@@ -70,18 +40,10 @@ const styles = StyleSheet.create({
     height: SIZE,
     alignSelf: 'center',
     marginVertical: 10,
-    position: 'relative',
     overflow: 'hidden',
   },
   wheel: {
-    ...StyleSheet.absoluteFillObject,
     width: SIZE,
     height: SIZE,
-  },
-  hitArea: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
   },
 });
