@@ -40,7 +40,8 @@ export function WeekWheel() {
       />
 
       {DAYS.map((day, index) => {
-        const hit = point(HIT_RADIUS, index * SLICE + SLICE / 2);
+        // Mo is centered exactly at 12 o'clock, then days continue clockwise.
+        const hit = point(HIT_RADIUS, index * SLICE);
 
         return (
           <Pressable
@@ -48,11 +49,12 @@ export function WeekWheel() {
             accessibilityRole="button"
             accessibilityLabel={`Select ${day}`}
             onPress={() => setSelectedDay(day)}
+            hitSlop={4}
             style={[
               styles.hitArea,
               {
-                left: hit.x - 37,
-                top: hit.y - 37,
+                left: hit.x - 30,
+                top: hit.y - 30,
               },
             ]}
           />
@@ -68,15 +70,18 @@ const styles = StyleSheet.create({
     height: SIZE,
     alignSelf: 'center',
     marginVertical: 10,
+    position: 'relative',
+    overflow: 'hidden',
   },
   wheel: {
+    ...StyleSheet.absoluteFillObject,
     width: SIZE,
     height: SIZE,
   },
   hitArea: {
     position: 'absolute',
-    width: 74,
-    height: 74,
-    borderRadius: 37,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
 });
