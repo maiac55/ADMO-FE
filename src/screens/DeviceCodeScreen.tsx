@@ -107,7 +107,7 @@ const s = StyleSheet.create({
   infoBody: { color: '#687DA3', fontSize: 13, lineHeight: 19 },
   spacer: { flex: 1, minHeight: 32 },
   connect: {
-    height: 56, borderRadius: 16, backgroundColor: colors.teal,
+    height: 56, borderRadius: 28, backgroundColor: colors.teal,
     alignItems: 'center', justifyContent: 'center'
   },
   connectDisabled: { backgroundColor: '#D7EEEE' },
