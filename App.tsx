@@ -9,6 +9,7 @@ import { RegisterScreen } from './src/screens/RegisterScreen';
 import { ForgotPasswordScreen } from './src/screens/ForgotPasswordScreen';
 import { AccountCreatedScreen } from './src/screens/AccountCreatedScreen';
 import { ConnectBoxScreen } from './src/screens/ConnectBoxScreen';
+import { DeviceCodeScreen } from './src/screens/DeviceCodeScreen';
 import { PersonInfoScreen } from './src/screens/PersonInfoScreen';
 import { BoxAddedScreen } from './src/screens/BoxAddedScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
@@ -35,6 +36,7 @@ export default function App() {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="AccountCreated" component={AccountCreatedScreen} />
         <Stack.Screen name="ConnectBox" component={ConnectBoxScreen} />
+        <Stack.Screen name="DeviceCode" component={DeviceCodeScreen} />
         <Stack.Screen name="PersonInfo" component={PersonInfoScreen} />
         <Stack.Screen name="BoxAdded" component={BoxAddedScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
