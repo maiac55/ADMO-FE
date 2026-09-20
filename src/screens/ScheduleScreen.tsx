@@ -48,7 +48,7 @@ export function ScheduleScreen({ navigation }: Props) {
 
           <View style={styles.medList}>
             {meds.map((med) => (
-              <Pressable key={med.time} style={styles.medCard}>
+              <Pressable key={med.time} style={styles.medCard} onPress={() => navigation.navigate('Medications')}>
                 <Text style={styles.time}>{med.time}</Text>
                 <View style={styles.verticalLine} />
                 <View style={[styles.medIcon, { backgroundColor: med.bg }]}><Ionicons name={med.icon} size={24} color={colors.teal} /></View>
@@ -62,7 +62,7 @@ export function ScheduleScreen({ navigation }: Props) {
             ))}
           </View>
         </ScrollView>
-        <BottomNav active="Medications" onNavigate={navigateTab} />
+        <BottomNav active="Home" onNavigate={navigateTab} />
       </View>
     </SafeAreaView>
   );
