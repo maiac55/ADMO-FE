@@ -30,7 +30,7 @@ export function ConnectBoxScreen({ navigation }: Props) {
 
         <View style={s.buttons}>
           <PrimaryButton label="Scan QR code" icon="qr-code-outline" onPress={() => navigation.navigate('PersonInfo')} />
-          <SecondaryButton label="Enter device code" icon="keypad-outline" onPress={() => navigation.navigate('PersonInfo')} />
+          <SecondaryButton label="Enter device code" icon="keypad-outline" onPress={() => navigation.navigate('DeviceCode')} />
         </View>
 
         <Pressable style={s.help}><Ionicons name="help-circle-outline" size={20} color={colors.teal}/><Text style={s.helpText}>Need help?</Text></Pressable>
