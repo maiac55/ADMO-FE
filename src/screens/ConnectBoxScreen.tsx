@@ -29,7 +29,7 @@ export function ConnectBoxScreen({ navigation }: Props) {
         <Text style={s.subtitle}>Scan the QR code on the{`\n`}ADMO Box or enter the device code{`\n`}manually.</Text>
 
         <View style={s.buttons}>
-          <PrimaryButton label="Scan QR code" icon="qr-code-outline" onPress={() => navigation.navigate('PersonInfo')} />
+          <PrimaryButton label="Scan QR code" icon="qr-code-outline" onPress={() => navigation.navigate('ScanBox')} />
           <SecondaryButton label="Enter device code" icon="keypad-outline" onPress={() => navigation.navigate('DeviceCode')} />
         </View>
 
