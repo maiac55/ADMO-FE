@@ -8,10 +8,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AuthLayout } from '../components/AuthLayout';
-import {
-  PrimaryButton,
-  SecondaryButton,
-} from '../components/Buttons';
+import { PrimaryButton } from '../components/Buttons';
 import { RootStackParamList } from '../navigation';
 import { colors } from '../theme/colors';
 
@@ -55,13 +52,6 @@ export function AccountCreatedScreen({
         icon="link-outline"
         onPress={() => navigation.navigate('ConnectBox')}
         style={styles.first}
-      />
-
-      {/* Set up later */}
-      <SecondaryButton
-        label="Set up later"
-        icon="time-outline"
-        onPress={() => navigation.navigate('Home')}
       />
     </AuthLayout>
   );
