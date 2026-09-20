@@ -30,7 +30,7 @@ export function ConnectBoxScreen({ navigation }: Props) {
 
         <View style={s.buttons}>
           <PrimaryButton label="Scan QR code" icon="qr-code-outline" onPress={() => navigation.navigate('ScanBox')} />
-          <SecondaryButton label="Enter device code" icon="keypad-outline" onPress={() => navigation.navigate('DeviceCode')} />
+          <View style={s.roundedSecondary}><SecondaryButton label="Enter device code" icon="keypad-outline" onPress={() => navigation.navigate('DeviceCode')} /></View>
         </View>
 
         <Pressable style={s.help}><Ionicons name="help-circle-outline" size={20} color={colors.teal}/><Text style={s.helpText}>Need help?</Text></Pressable>
@@ -47,5 +47,5 @@ const s = StyleSheet.create({
   device:{width:150,height:85,borderRadius:9,borderWidth:1,borderColor:'#A7E0DF',backgroundColor:'#F4FFFF',alignItems:'center',justifyContent:'center'},
   deviceLines:{position:'absolute',bottom:10,flexDirection:'row',gap:5}, line:{width:26,height:3,backgroundColor:'#BDE9E7'},
   heading:{textAlign:'center',color:colors.navy,fontSize:19,fontWeight:'700',marginTop:20}, subtitle:{textAlign:'center',color:'#687DA3',fontSize:14,lineHeight:22,marginTop:8},
-  buttons:{gap:12,marginTop:30}, help:{marginTop:34,flexDirection:'row',gap:8,alignSelf:'center',alignItems:'center'},helpText:{color:colors.teal,fontSize:14,fontWeight:'600'}
+  buttons:{gap:12,marginTop:30}, roundedSecondary:{borderRadius:28,overflow:'hidden'}, help:{marginTop:34,flexDirection:'row',gap:8,alignSelf:'center',alignItems:'center'},helpText:{color:colors.teal,fontSize:14,fontWeight:'600'}
 });
