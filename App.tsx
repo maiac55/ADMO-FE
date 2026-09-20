@@ -15,6 +15,9 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { NotificationsScreen } from './src/screens/NotificationsScreen';
 import { ScheduleScreen } from './src/screens/ScheduleScreen';
 import { PlaceholderScreen } from './src/screens/PlaceholderScreen';
+import { MedicationsScreen } from './src/screens/MedicationsScreen';
+import { AddMedicationScreen } from './src/screens/AddMedicationScreen';
+import { HistoryScreen } from './src/screens/HistoryScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -37,8 +40,9 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Schedule" component={ScheduleScreen} />
-        <Stack.Screen name="Medications" component={ScheduleScreen} />
-        <Stack.Screen name="History" component={PlaceholderScreen} />
+        <Stack.Screen name="Medications" component={MedicationsScreen} />
+        <Stack.Screen name="AddMedication" component={AddMedicationScreen} />
+        <Stack.Screen name="History" component={HistoryScreen} />
         <Stack.Screen name="Profile" component={PlaceholderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
