@@ -7,7 +7,7 @@ import { BottomNav } from '../components/BottomNav';
 import { colors } from '../theme/colors';
 type Props=NativeStackScreenProps<RootStackParamList,'History'>;
 type Filter='All'|'Taken'|'Late'|'Missed';
-const rows=[['08:02','Morning medication','Disk 01   •   2 pills','Taken'],['13:17','Afternoon medication','Disk 02   •   1 pill','Late'],['20:00','Evening medication','Disk 03   •   1 pill','Missed']] as const;
+const rows=[['08:02','Morning medication','2 pills','Taken'],['13:17','Afternoon medication','1 pill','Late'],['20:00','Evening medication','1 pill','Missed']] as const;
 export function HistoryScreen({navigation}:Props){
  const [filter,setFilter]=useState<Filter>('All');
  const nav=(t:'Home'|'Medications'|'History'|'Profile')=>{if(t!=='History')navigation.navigate(t)};
@@ -16,7 +16,7 @@ export function HistoryScreen({navigation}:Props){
   <Text style={s.title}>History</Text>
   <View style={s.filters}>{(['All','Taken','Late','Missed'] as Filter[]).map(x=><Pressable key={x} onPress={()=>setFilter(x)} style={[s.filter,filter===x&&s.active]}><Text style={[s.filterText,filter===x&&s.activeText]}>{x}</Text></Pressable>)}</View>
   <Text style={s.section}>Today</Text><View style={s.card}>{visible.map((r,i)=><View key={r[0]} style={[s.row,i>0&&s.border]}><View style={[s.status,{backgroundColor:r[3]==='Taken'?'#32C451':r[3]==='Late'?'#FFA62B':'#F0524B'}]}><Ionicons name={r[3]==='Taken'?'checkmark':r[3]==='Late'?'time-outline':'close'} size={19} color="#FFF"/></View><Text style={s.time}>{r[0]}</Text><View style={s.med}><Text style={s.medName}>{r[1]}</Text><Text style={s.meta}>{r[2]}</Text></View><Text style={[s.badge,{color:r[3]==='Taken'?'#23A53D':r[3]==='Late'?'#E88A13':'#E53F3A'}]}>{r[3]}</Text></View>)}</View>
-  <Text style={s.section}>Yesterday</Text><View style={s.card}><View style={s.row}><View style={[s.status,{backgroundColor:'#32C451'}]}><Ionicons name="checkmark" size={19} color="#FFF"/></View><Text style={s.time}>08:00</Text><View style={s.med}><Text style={s.medName}>Morning medication</Text><Text style={s.meta}>Disk 01   •   2 pills</Text></View><Text style={[s.badge,{color:'#23A53D'}]}>Taken</Text></View></View>
+  <Text style={s.section}>Yesterday</Text><View style={s.card}><View style={s.row}><View style={[s.status,{backgroundColor:'#32C451'}]}><Ionicons name="checkmark" size={19} color="#FFF"/></View><Text style={s.time}>08:00</Text><View style={s.med}><Text style={s.medName}>Morning medication</Text><Text style={s.meta}>2 pills</Text></View><Text style={[s.badge,{color:'#23A53D'}]}>Taken</Text></View></View>
  </ScrollView><BottomNav active="History" onNavigate={nav}/></View></SafeAreaView>;
 }
 const s=StyleSheet.create({
