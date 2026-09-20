@@ -5,6 +5,7 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   AccountCreated: undefined;
   ConnectBox: undefined;
+  DeviceCode: undefined;
   PersonInfo: undefined;
   BoxAdded: { name: string; age: string; note: string };
   Home: undefined;
