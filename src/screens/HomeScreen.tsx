@@ -30,10 +30,10 @@ export function HomeScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.identity}>
-              <View style={styles.nameRow}>
+              <Pressable style={styles.nameRow} onPress={() => navigation.navigate('Boxes')}>
                 <Text style={styles.name}>Alexandra Popescu</Text>
                 <Ionicons name="chevron-down" size={17} color={colors.navy} />
-              </View>
+              </Pressable>
               <View style={styles.statusRow}>
                 <Text style={styles.statusText}>● ADMO Box</Text>
                 <Text style={styles.connected}>● Connected</Text>
