@@ -16,7 +16,9 @@ import { BoxAddedScreen } from './src/screens/BoxAddedScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { NotificationsScreen } from './src/screens/NotificationsScreen';
 import { ScheduleScreen } from './src/screens/ScheduleScreen';
-import { PlaceholderScreen } from './src/screens/PlaceholderScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
+import { BoxesScreen } from './src/screens/BoxesScreen';
+import { BoxProfileScreen } from './src/screens/BoxProfileScreen';
 import { MedicationsScreen } from './src/screens/MedicationsScreen';
 import { AddMedicationScreen } from './src/screens/AddMedicationScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
@@ -47,7 +49,9 @@ export default function App() {
         <Stack.Screen name="Medications" component={MedicationsScreen} />
         <Stack.Screen name="AddMedication" component={AddMedicationScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />
-        <Stack.Screen name="Profile" component={PlaceholderScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Boxes" component={BoxesScreen} />
+        <Stack.Screen name="BoxProfile" component={BoxProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
