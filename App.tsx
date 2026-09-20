@@ -10,6 +10,7 @@ import { ForgotPasswordScreen } from './src/screens/ForgotPasswordScreen';
 import { AccountCreatedScreen } from './src/screens/AccountCreatedScreen';
 import { ConnectBoxScreen } from './src/screens/ConnectBoxScreen';
 import { DeviceCodeScreen } from './src/screens/DeviceCodeScreen';
+import { ScanBoxScreen } from './src/screens/ScanBoxScreen';
 import { PersonInfoScreen } from './src/screens/PersonInfoScreen';
 import { BoxAddedScreen } from './src/screens/BoxAddedScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
@@ -37,6 +38,7 @@ export default function App() {
         <Stack.Screen name="AccountCreated" component={AccountCreatedScreen} />
         <Stack.Screen name="ConnectBox" component={ConnectBoxScreen} />
         <Stack.Screen name="DeviceCode" component={DeviceCodeScreen} />
+        <Stack.Screen name="ScanBox" component={ScanBoxScreen} />
         <Stack.Screen name="PersonInfo" component={PersonInfoScreen} />
         <Stack.Screen name="BoxAdded" component={BoxAddedScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
