@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Notifications: undefined;
   Schedule: undefined;
   Medications: undefined;
+  AddMedication: undefined;
   History: undefined;
   Profile: undefined;
 };
