@@ -5,19 +5,22 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#F7FEFF"
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "ADMO uses your camera to scan the QR code on your ADMO Box."
       }
     },
+    "android": {
+      "adaptiveIcon": { "backgroundColor": "#F7FEFF" },
+      "permissions": ["CAMERA"]
+    },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      ["expo-camera", {
+        "cameraPermission": "Allow ADMO to use your camera to scan your ADMO Box QR code."
+      }]
     ]
   }
 }
