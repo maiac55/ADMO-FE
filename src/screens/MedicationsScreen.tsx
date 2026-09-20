@@ -19,7 +19,6 @@ export function MedicationsScreen({ navigation }: Props) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View><Text style={styles.title}>Medications</Text><Text style={styles.subtitle}>Manage all your medications in one place.</Text></View>
-          <Pressable style={styles.addCircle} onPress={() => navigation.navigate('AddMedication')}><Ionicons name="add" size={25} color="#FFF" /></Pressable>
         </View>
         <View style={styles.filters}>
           {(['All','Active','Inactive'] as Filter[]).map(item => (
@@ -34,7 +33,7 @@ export function MedicationsScreen({ navigation }: Props) {
           <Text style={styles.emptyText}>Add your first medication to set up reminders and keep track of your treatment.</Text>
         </View>
         <Pressable style={styles.addButton} onPress={() => navigation.navigate('AddMedication')}>
-          <Ionicons name="add" size={21} color="#FFF"/><Text style={styles.addText}>Add medication</Text>
+          <Text style={styles.addText}>Add medication</Text>
         </Pressable>
       </ScrollView>
       <BottomNav active="Medications" onNavigate={navigateTab}/>
@@ -45,7 +44,7 @@ const styles=StyleSheet.create({
  safe:{flex:1,backgroundColor:'#FFF'},page:{flex:1,backgroundColor:'#F9FEFF'},content:{padding:22,paddingBottom:28,flexGrow:1},
  header:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginTop:10},title:{fontSize:24,fontWeight:'800',color:colors.navy},subtitle:{fontSize:11,color:'#8197B4',marginTop:3},
  addCircle:{width:42,height:42,borderRadius:21,backgroundColor:colors.teal,alignItems:'center',justifyContent:'center'},
- filters:{flexDirection:'row',backgroundColor:'#F0F6F8',borderRadius:12,padding:3,marginTop:22},filter:{flex:1,height:38,borderRadius:10,alignItems:'center',justifyContent:'center'},filterActive:{backgroundColor:'#DDF4F2'},filterText:{fontSize:11,color:'#7188AD'},filterTextActive:{color:colors.teal,fontWeight:'700'},
+ filters:{flexDirection:'row',backgroundColor:'#F0F6F8',borderRadius:12,padding:3,marginTop:22},filter:{flex:1,height:38,borderRadius:10,alignItems:'center',justifyContent:'center'},filterActive:{backgroundColor:colors.teal},filterText:{fontSize:11,color:'#7188AD'},filterTextActive:{color:'#FFFFFF',fontWeight:'700'},
  emptyCard:{flex:1,minHeight:350,borderWidth:1,borderColor:'#E3EDF1',borderRadius:16,marginTop:16,alignItems:'center',justifyContent:'center',paddingHorizontal:32,backgroundColor:'#FCFEFF'},
  pillCircle:{width:76,height:76,borderRadius:38,backgroundColor:'#E4F5F3',alignItems:'center',justifyContent:'center'},emptyTitle:{fontSize:16,fontWeight:'800',color:colors.navy,marginTop:18},emptyText:{fontSize:12,lineHeight:18,textAlign:'center',color:'#7C91AE',marginTop:8},
  addButton:{height:52,borderRadius:13,backgroundColor:colors.teal,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:16},addText:{color:'#FFF',fontSize:14,fontWeight:'700'}
