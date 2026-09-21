@@ -1,40 +1,44 @@
 import React, { useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { Alert, Pressable, StyleSheet, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthLayout } from '../components/AuthLayout';
 import { AuthInput } from '../components/AuthInput';
-import {
-  PrimaryButton,
-  SecondaryButton,
-} from '../components/Buttons';
+import { PrimaryButton, SecondaryButton } from '../components/Buttons';
 import { Divider } from '../components/Divider';
 import { RootStackParamList } from '../navigation';
 import { colors } from '../theme/colors';
+import { login } from '../api';
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'Login'
->;
+type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-export function LoginScreen({
-  navigation,
-}: Props) {
+export function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleLogin() {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter your email and password');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigation.navigate('Home');
+    } catch (err: any) {
+      Alert.alert('Login failed', err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <AuthLayout
       title="Welcome to ADMO"
-      subtitle={
-        'Your health, simplified.\nLog in to continue or create a new account.'
-      }
+      subtitle={'Your health, simplified.\nLog in to continue or create a new account.'}
     >
-      {/* Email */}
       <AuthInput
         icon="mail-outline"
         placeholder="Email address"
@@ -44,7 +48,6 @@ export function LoginScreen({
         onChangeText={setEmail}
       />
 
-      {/* Password */}
       <AuthInput
         icon="lock-closed-outline"
         placeholder="Password"
@@ -53,25 +56,18 @@ export function LoginScreen({
         onChangeText={setPassword}
       />
 
-      {/* Forgot password */}
-      <Pressable
-        onPress={() => navigation.navigate('ForgotPassword')}
-      >
-        <Text style={styles.link}>
-          Forgot your password?
-        </Text>
+      <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
+        <Text style={styles.link}>Forgot your password?</Text>
       </Pressable>
 
-      {/* Log in */}
       <PrimaryButton
-        label="Log in"
-        onPress={() => navigation.navigate('Home')}
+        label={loading ? 'Logging in...' : 'Log in'}
+        onPress={handleLogin}
         style={styles.main}
       />
 
       <Divider />
 
-      {/* Create account */}
       <SecondaryButton
         label="Create account"
         onPress={() => navigation.navigate('Register')}
@@ -86,7 +82,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: 12,
   },
-
   main: {
     marginTop: 28,
   },
