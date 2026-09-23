@@ -26,7 +26,6 @@ export function ConnectBoxScreen({ navigation }: Props) {
     setLoading(true);
     try {
       const data = await connectBox(code.trim());
-      // Store box ID so PersonInfoScreen can use it
       await AsyncStorage.setItem('currentBoxId', data.box.id);
       navigation.navigate('PersonInfo');
     } catch (err: any) {
@@ -80,7 +79,6 @@ export function ConnectBoxScreen({ navigation }: Props) {
             label={loading ? 'Connecting...' : 'Scan QR code'}
             icon="qr-code-outline"
             onPress={() => {
-              // For demo: use a generated code since no camera scanner is set up
               const demoCode = `ADMO-${Math.floor(1000 + Math.random() * 9000)}`;
               handleConnect(demoCode);
             }}

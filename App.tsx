@@ -9,9 +9,19 @@ import { RegisterScreen } from './src/screens/RegisterScreen';
 import { ForgotPasswordScreen } from './src/screens/ForgotPasswordScreen';
 import { AccountCreatedScreen } from './src/screens/AccountCreatedScreen';
 import { ConnectBoxScreen } from './src/screens/ConnectBoxScreen';
+import { DeviceCodeScreen } from './src/screens/DeviceCodeScreen';
+import { ScanBoxScreen } from './src/screens/ScanBoxScreen';
 import { PersonInfoScreen } from './src/screens/PersonInfoScreen';
 import { BoxAddedScreen } from './src/screens/BoxAddedScreen';
-import { PlaceholderScreen } from './src/screens/PlaceholderScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { NotificationsScreen } from './src/screens/NotificationsScreen';
+import { ScheduleScreen } from './src/screens/ScheduleScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
+import { BoxesScreen } from './src/screens/BoxesScreen';
+import { BoxProfileScreen } from './src/screens/BoxProfileScreen';
+import { MedicationsScreen } from './src/screens/MedicationsScreen';
+import { AddMedicationScreen } from './src/screens/AddMedicationScreen';
+import { HistoryScreen } from './src/screens/HistoryScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,16 +29,29 @@ export default function App() {
   return (
     <NavigationContainer>
       <StatusBar style="dark" />
-      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false, animation: 'fade' }}>
+      <Stack.Navigator
+        initialRouteName="Splash"
+        screenOptions={{ headerShown: false, animation: 'fade' }}
+      >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="AccountCreated" component={AccountCreatedScreen} />
         <Stack.Screen name="ConnectBox" component={ConnectBoxScreen} />
+        <Stack.Screen name="DeviceCode" component={DeviceCodeScreen} />
+        <Stack.Screen name="ScanBox" component={ScanBoxScreen} />
         <Stack.Screen name="PersonInfo" component={PersonInfoScreen} />
         <Stack.Screen name="BoxAdded" component={BoxAddedScreen} />
-        <Stack.Screen name="Home" component={PlaceholderScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="Schedule" component={ScheduleScreen} />
+        <Stack.Screen name="Medications" component={MedicationsScreen} />
+        <Stack.Screen name="AddMedication" component={AddMedicationScreen} />
+        <Stack.Screen name="History" component={HistoryScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Boxes" component={BoxesScreen} />
+        <Stack.Screen name="BoxProfile" component={BoxProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
