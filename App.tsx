@@ -1,8 +1,9 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useRef } from 'react';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { RootStackParamList } from './src/navigation';
+import { setNavigateToLogin } from './src/api';
 import { SplashScreen } from './src/screens/SplashScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
@@ -26,8 +27,17 @@ import { HistoryScreen } from './src/screens/HistoryScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const navRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navRef}
+      onReady={() => {
+        setNavigateToLogin(() => {
+          navRef.current?.reset({ index: 0, routes: [{ name: 'Login' }] });
+        });
+      }}
+    >
       <StatusBar style="dark" />
       <Stack.Navigator
         initialRouteName="Splash"

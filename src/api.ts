@@ -2,6 +2,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BASE_URL = 'http://localhost:3000/api';
 
+type NavigateToLogin = () => void;
+let navigateToLogin: NavigateToLogin | null = null;
+
+export function setNavigateToLogin(fn: NavigateToLogin) {
+  navigateToLogin = fn;
+}
+
 async function getToken(): Promise<string | null> {
   return await AsyncStorage.getItem('token');
 }
@@ -20,6 +27,13 @@ async function request(path: string, options: RequestInit = {}) {
 
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
   const data = await res.json();
+
+  if (res.status === 401) {
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('user');
+    navigateToLogin?.();
+    throw new Error('Session expired. Please log in again.');
+  }
 
   if (!res.ok) {
     throw new Error(data.error || 'Something went wrong');
