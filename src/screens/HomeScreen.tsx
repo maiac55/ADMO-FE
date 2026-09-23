@@ -1,21 +1,48 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from '../navigation';
 import { WeekWheel } from '../components/WeekWheel';
 import { BottomNav } from '../components/BottomNav';
 import { colors } from '../theme/colors';
+import { getProfile, getMedications } from '../api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
-const schedule = [
-  { time: '08:00', label: 'Morning medication' },
-  { time: '13:00', label: 'Afternoon medication' },
-  { time: '20:00', label: 'Evening medication' },
-];
-
 export function HomeScreen({ navigation }: Props) {
+  const [userName, setUserName] = useState('');
+  const [nextMed, setNextMed] = useState<{ time: string; label: string } | null>(null);
+  const [todaySchedule, setTodaySchedule] = useState<{ time: string; label: string }[]>([]);
+
+  useFocusEffect(useCallback(() => {
+    getProfile()
+      .then((d) => setUserName(d.user?.name || ''))
+      .catch(() => {});
+
+    const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date().getDay()];
+    getMedications()
+      .then((d) => {
+        const meds: any[] = d.medications || [];
+        const rows: { time: string; label: string }[] = [];
+        for (const med of meds) {
+          if (!med.active) continue;
+          if (med.days?.length && !med.days.includes(day)) continue;
+          for (const t of med.times || []) {
+            rows.push({ time: t.time, label: med.name });
+          }
+        }
+        rows.sort((a, b) => a.time.localeCompare(b.time));
+        setTodaySchedule(rows);
+        const now = new Date().toTimeString().slice(0, 5);
+        const next = rows.find((r) => r.time >= now) || rows[0] || null;
+        setNextMed(next);
+      })
+      .catch(() => {});
+  }, []));
+
   const navigateTab = (tab: 'Home' | 'Medications' | 'History' | 'Profile') => {
     if (tab !== 'Home') navigation.navigate(tab);
   };
@@ -28,10 +55,9 @@ export function HomeScreen({ navigation }: Props) {
             <View style={styles.avatar}>
               <Ionicons name="person-outline" size={25} color={colors.navy} />
             </View>
-
             <View style={styles.identity}>
               <Pressable style={styles.nameRow} onPress={() => navigation.navigate('Boxes')}>
-                <Text style={styles.name}>Alexandra Popescu</Text>
+                <Text style={styles.name}>{userName || 'Welcome'}</Text>
                 <Ionicons name="chevron-down" size={17} color={colors.navy} />
               </Pressable>
               <View style={styles.statusRow}>
@@ -39,7 +65,6 @@ export function HomeScreen({ navigation }: Props) {
                 <Text style={styles.connected}>● Connected</Text>
               </View>
             </View>
-
             <Pressable style={styles.bell} onPress={() => navigation.navigate('Notifications')}>
               <Ionicons name="notifications-outline" size={23} color={colors.navy} />
               <View style={styles.notificationDot} />
@@ -49,8 +74,8 @@ export function HomeScreen({ navigation }: Props) {
           <View style={styles.nextCard}>
             <View>
               <Text style={styles.cardLabel}>Next medication</Text>
-              <Text style={styles.nextTime}>08:00</Text>
-              <Text style={styles.medicationLabel}>Morning medication</Text>
+              <Text style={styles.nextTime}>{nextMed?.time || '—'}</Text>
+              <Text style={styles.medicationLabel}>{nextMed?.label || 'No medications scheduled'}</Text>
             </View>
             <View style={styles.clockCircle}>
               <Ionicons name="time-outline" size={21} color={colors.teal} />
@@ -66,15 +91,18 @@ export function HomeScreen({ navigation }: Props) {
                 <Text style={styles.viewAll}>View all</Text>
               </Pressable>
             </View>
-            {schedule.map((item, index) => (
-              <View key={item.time} style={[styles.scheduleRow, index > 0 && styles.rowBorder]}>
-                <Text style={styles.scheduleTime}>{item.time}</Text>
-                <Text style={styles.scheduleLabel}>{item.label}</Text>
-              </View>
-            ))}
+            {todaySchedule.length === 0 ? (
+              <Text style={styles.emptySchedule}>No medications for today.</Text>
+            ) : (
+              todaySchedule.slice(0, 3).map((item, index) => (
+                <View key={`${item.time}-${index}`} style={[styles.scheduleRow, index > 0 && styles.rowBorder]}>
+                  <Text style={styles.scheduleTime}>{item.time}</Text>
+                  <Text style={styles.scheduleLabel}>{item.label}</Text>
+                </View>
+              ))
+            )}
           </View>
         </ScrollView>
-
         <BottomNav active="Home" onNavigate={navigateTab} />
       </View>
     </SafeAreaView>
@@ -103,6 +131,7 @@ const styles = StyleSheet.create({
   scheduleCard: { borderRadius: 16, backgroundColor: '#FFFFFF', paddingHorizontal: 15, paddingTop: 14, marginTop: 8, shadowColor: '#6C8399', shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
   scheduleHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 8 },
   viewAll: { color: colors.teal, fontSize: 11 },
+  emptySchedule: { color: '#8197B4', fontSize: 12, textAlign: 'center', paddingVertical: 16 },
   scheduleRow: { minHeight: 42, flexDirection: 'row', alignItems: 'center' },
   rowBorder: { borderTopWidth: 1, borderTopColor: '#EEF2F4' },
   scheduleTime: { width: 54, color: colors.navy, fontSize: 11, fontWeight: '700' },

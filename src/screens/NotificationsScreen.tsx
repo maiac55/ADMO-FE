@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList } from '../navigation';
 import { colors } from '../theme/colors';
+import { getNotificationSettings, updateNotificationSettings } from '../api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Notifications'>;
 type ToggleKey = 'reminders' | 'taken' | 'missed' | 'refill' | 'disconnected' | 'mechanical';
@@ -26,6 +27,37 @@ const frequencies = [
 export function NotificationsScreen({ navigation }: Props) {
   const [toggles, setToggles] = useState<Record<ToggleKey, boolean>>({ reminders: true, taken: false, missed: true, refill: true, disconnected: true, mechanical: true });
   const [frequency, setFrequency] = useState('daily');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getNotificationSettings()
+      .then((data) => {
+        const s = data.settings;
+        setToggles({ reminders: !!s.reminders, taken: !!s.taken, missed: !!s.missed, refill: !!s.refill, disconnected: !!s.disconnected, mechanical: !!s.mechanical });
+        setFrequency(s.frequency || 'daily');
+      })
+      .catch((err) => Alert.alert('Error', err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const saveToggle = async (key: ToggleKey, value: boolean) => {
+    const next = { ...toggles, [key]: value };
+    setToggles(next);
+    try {
+      await updateNotificationSettings({ [key]: value });
+    } catch (err: any) {
+      Alert.alert('Error', err.message);
+    }
+  };
+
+  const saveFrequency = async (key: string) => {
+    setFrequency(key);
+    try {
+      await updateNotificationSettings({ frequency: key });
+    } catch (err: any) {
+      Alert.alert('Error', err.message);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -39,37 +71,43 @@ export function NotificationsScreen({ navigation }: Props) {
         </View>
         <Text style={styles.subtitle}>Choose what you want to be notified about.</Text>
 
-        <Section title="Notification types" subtitle="Manage the alerts you want to receive.">
-          {notificationTypes.map((item, index) => (
-            <View key={item.key} style={[styles.settingRow, index > 0 && styles.rowBorder]}>
-              <View style={styles.iconCircle}><Ionicons name={item.icon} size={22} color={colors.teal} /></View>
-              <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>{item.title}</Text>
-                <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
-              </View>
-              <Switch
-                value={toggles[item.key]}
-                onValueChange={(value) => setToggles((current) => ({ ...current, [item.key]: value }))}
-                trackColor={{ false: '#DCE5EE', true: colors.teal }}
-              />
-            </View>
-          ))}
-        </Section>
+        {loading ? (
+          <ActivityIndicator color={colors.teal} style={{ marginTop: 40 }} />
+        ) : (
+          <>
+            <Section title="Notification types" subtitle="Manage the alerts you want to receive.">
+              {notificationTypes.map((item, index) => (
+                <View key={item.key} style={[styles.settingRow, index > 0 && styles.rowBorder]}>
+                  <View style={styles.iconCircle}><Ionicons name={item.icon} size={22} color={colors.teal} /></View>
+                  <View style={styles.settingText}>
+                    <Text style={styles.settingTitle}>{item.title}</Text>
+                    <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+                  </View>
+                  <Switch
+                    value={toggles[item.key]}
+                    onValueChange={(value) => saveToggle(item.key, value)}
+                    trackColor={{ false: '#DCE5EE', true: colors.teal }}
+                  />
+                </View>
+              ))}
+            </Section>
 
-        <Section title="Notification frequency" subtitle="Choose how often you want to be notified.">
-          {frequencies.map((item, index) => (
-            <Pressable key={item.key} onPress={() => setFrequency(item.key)} style={[styles.settingRow, index > 0 && styles.rowBorder]}>
-              <View style={styles.iconCircle}><Ionicons name={item.icon} size={22} color={colors.teal} /></View>
-              <View style={styles.settingText}>
-                <Text style={styles.settingTitle}>{item.title}</Text>
-                <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
-              </View>
-              <View style={[styles.radio, frequency === item.key && styles.radioActive]}>
-                {frequency === item.key ? <View style={styles.radioDot} /> : null}
-              </View>
-            </Pressable>
-          ))}
-        </Section>
+            <Section title="Notification frequency" subtitle="Choose how often you want to be notified.">
+              {frequencies.map((item, index) => (
+                <Pressable key={item.key} onPress={() => saveFrequency(item.key)} style={[styles.settingRow, index > 0 && styles.rowBorder]}>
+                  <View style={styles.iconCircle}><Ionicons name={item.icon} size={22} color={colors.teal} /></View>
+                  <View style={styles.settingText}>
+                    <Text style={styles.settingTitle}>{item.title}</Text>
+                    <Text style={styles.settingSubtitle}>{item.subtitle}</Text>
+                  </View>
+                  <View style={[styles.radio, frequency === item.key && styles.radioActive]}>
+                    {frequency === item.key ? <View style={styles.radioDot} /> : null}
+                  </View>
+                </Pressable>
+              ))}
+            </Section>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

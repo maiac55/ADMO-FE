@@ -96,3 +96,90 @@ export async function getBox(boxId: string) {
 export async function deleteBox(boxId: string) {
   return request(`/boxes/${boxId}`, { method: 'DELETE' });
 }
+
+// ── Medications ─────────────────────────────────────────────────────────────
+
+export async function getMedications() {
+  return request('/medications');
+}
+
+export async function getMedication(id: string) {
+  return request(`/medications/${id}`);
+}
+
+export async function addMedication(data: {
+  box_id?: string;
+  name: string;
+  dose: string;
+  days?: string[];
+  times?: { label: string; time: string; pills: number }[];
+  active?: boolean;
+}) {
+  return request('/medications', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function updateMedication(id: string, data: {
+  name?: string;
+  dose?: string;
+  days?: string[];
+  times?: { label: string; time: string; pills: number }[];
+  active?: boolean;
+}) {
+  return request(`/medications/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function deleteMedication(id: string) {
+  return request(`/medications/${id}`, { method: 'DELETE' });
+}
+
+// ── History ──────────────────────────────────────────────────────────────────
+
+export async function getHistory(params?: { date?: string; status?: string }) {
+  const qs = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : '';
+  return request(`/history${qs}`);
+}
+
+export async function logHistory(data: {
+  medication_id: string;
+  status: 'Taken' | 'Missed' | 'Late';
+  scheduled_time: string;
+  taken_at?: string;
+  date: string;
+}) {
+  return request('/history', { method: 'POST', body: JSON.stringify(data) });
+}
+
+// ── Notifications ────────────────────────────────────────────────────────────
+
+export async function getNotificationSettings() {
+  return request('/notifications');
+}
+
+export async function updateNotificationSettings(data: {
+  reminders?: boolean;
+  taken?: boolean;
+  missed?: boolean;
+  refill?: boolean;
+  disconnected?: boolean;
+  mechanical?: boolean;
+  frequency?: string;
+}) {
+  return request('/notifications', { method: 'PUT', body: JSON.stringify(data) });
+}
+
+// ── Profile ──────────────────────────────────────────────────────────────────
+
+export async function getProfile() {
+  return request('/profile');
+}
+
+export async function updateProfile(data: { name?: string; date_of_birth?: string }) {
+  return request('/profile', { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function changePassword(current_password: string, new_password: string) {
+  return request('/profile/change-password', {
+    method: 'PUT',
+    body: JSON.stringify({ current_password, new_password }),
+  });
+}

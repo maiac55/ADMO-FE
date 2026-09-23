@@ -1,15 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation';
 import { AddBoxProgress } from '../components/AddBoxProgress';
 import { colors } from '../theme/colors';
+import { connectBox } from '../api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'DeviceCode'>;
 
 export function DeviceCodeScreen({ navigation }: Props) {
   const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [loading, setLoading] = useState(false);
   const inputs = useRef<Array<TextInput | null>>([]);
 
   const updateCharacter = (value: string, index: number) => {
@@ -27,6 +30,21 @@ export function DeviceCodeScreen({ navigation }: Props) {
   };
 
   const complete = code.every(Boolean);
+
+  const handleConnect = async () => {
+    if (!complete || loading) return;
+    setLoading(true);
+    try {
+      const deviceCode = code.join('');
+      const data = await connectBox(deviceCode);
+      await AsyncStorage.setItem('currentBoxId', data.box.id);
+      navigation.navigate('PersonInfo');
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Failed to connect box');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={s.safe}>
@@ -74,11 +92,13 @@ export function DeviceCodeScreen({ navigation }: Props) {
         <View style={s.spacer} />
 
         <Pressable
-          disabled={!complete}
-          onPress={() => navigation.navigate('PersonInfo')}
-          style={[s.connect, !complete && s.connectDisabled]}
+          disabled={!complete || loading}
+          onPress={handleConnect}
+          style={[s.connect, (!complete || loading) && s.connectDisabled]}
         >
-          <Text style={[s.connectText, !complete && s.connectTextDisabled]}>Connect</Text>
+          <Text style={[s.connectText, (!complete || loading) && s.connectTextDisabled]}>
+            {loading ? 'Connecting...' : 'Connect'}
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>
