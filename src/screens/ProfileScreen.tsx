@@ -53,8 +53,8 @@ export function ProfileScreen({ navigation }: Props) {
 
           <Text style={s.section}>ACCOUNT</Text>
           <View style={s.card}>
-            <Row icon="person-outline" title="Personal information" />
-            <Row icon="lock-closed-outline" title="Email & password" />
+            <Row icon="person-outline" title="Personal information" onPress={() => navigation.navigate('EditProfile')} />
+            <Row icon="lock-closed-outline" title="Email & password" onPress={() => navigation.navigate('ChangePassword')} />
           </View>
 
           <Text style={s.section}>MY ADMO BOXES</Text>

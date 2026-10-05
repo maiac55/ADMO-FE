@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,30 @@ import { addMedication } from '../api';
 type Props = NativeStackScreenProps<RootStackParamList, 'AddMedication'>;
 
 const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const SUGGESTIONS = [
+  'Paracetamol 500 mg', 'Paracetamol 1000 mg',
+  'Ibuprofen 200 mg', 'Ibuprofen 400 mg',
+  'Amoxicillin 500 mg', 'Aspirin 100 mg',
+  'Vitamin D3 1000 IU', 'Vitamin C 500 mg',
+  'Melatonin 3 mg', 'Omeprazole 20 mg',
+  'Metformin 500 mg', 'Atorvastatin 10 mg',
+  'Lisinopril 5 mg', 'Sertraline 50 mg',
+  'Loratadine 10 mg', 'Cetirizine 10 mg',
+  'Zinc 10 mg', 'Magnesium 300 mg',
+  'Omega-3 1000 mg', 'Probiotics',
+  'Amlodipină 5 mg', 'Amlodipină 10 mg',
+  'Memantină 10 mg', 'Memantină 20 mg',
+  'Furosemid 40 mg',
+  'Sintrom 4 mg',
+  'Aspenter 75 mg',
+  'Ramipril 5 mg', 'Ramipril 10 mg',
+  'Pentoxifilină 400 mg',
+];
+
+const ALL_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const DAILY_MEDS = ['Amlodipină', 'Memantină', 'Furosemid', 'Sintrom', 'Aspenter', 'Ramipril', 'Pentoxifilină'];
 
 const defaultTimes = [
   { label: 'Morning', time: '08:00', pills: 1, enabled: true },
@@ -23,6 +47,18 @@ export function AddMedicationScreen({ navigation }: Props) {
   const [selected, setSelected] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
   const [times, setTimes] = useState(defaultTimes);
   const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filtered = name.trim().length > 0
+    ? SUGGESTIONS.filter((s) => s.toLowerCase().includes(name.toLowerCase()))
+    : SUGGESTIONS;
+
+  const pickSuggestion = (s: string) => {
+    setName(s);
+    setShowDropdown(false);
+    const isDaily = DAILY_MEDS.some((m) => s.toLowerCase().startsWith(m.toLowerCase()));
+    if (isDaily) setSelected(ALL_DAYS);
+  };
 
   const toggleDay = (d: string) =>
     setSelected((x) => (x.includes(d) ? x.filter((v) => v !== d) : [...x, d]));
@@ -70,18 +106,41 @@ export function AddMedicationScreen({ navigation }: Props) {
           </Pressable>
         </View>
 
-        <View style={s.card}>
+        <View style={[s.card, { zIndex: 10 }]}>
           <Text style={s.heading}>Medication name</Text>
           <View style={s.input}>
             <Ionicons name="bandage-outline" size={21} color={colors.navy} />
             <TextInput
               value={name}
-              onChangeText={setName}
-              placeholder="e.g. Paracetamol 500 mg"
+              onChangeText={(t) => { setName(t); setShowDropdown(true); }}
+              onFocus={() => setShowDropdown(true)}
+              placeholder="Search or type medication…"
               placeholderTextColor="#A0B3C8"
               style={s.inputText}
+              autoCapitalize="words"
             />
+            {name.length > 0 && (
+              <TouchableOpacity onPress={() => { setName(''); setShowDropdown(true); }} style={{ padding: 4 }}>
+                <Ionicons name="close-circle" size={17} color="#A0B3C8" />
+              </TouchableOpacity>
+            )}
           </View>
+
+          {showDropdown && filtered.length > 0 && (
+            <ScrollView style={s.dropdown} nestedScrollEnabled keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+              {filtered.map((item) => (
+                <TouchableOpacity
+                  key={item}
+                  style={s.dropItem}
+                  onPress={() => pickSuggestion(item)}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="medical-outline" size={14} color={colors.teal} style={{ marginRight: 8 }} />
+                  <Text style={s.dropText}>{item}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         <View style={s.card}>
@@ -178,4 +237,7 @@ const s = StyleSheet.create({
   pillCount: { flex: 1, textAlign: 'center', color: colors.navy, fontSize: 14, fontWeight: '700' },
   info: { flexDirection: 'row', gap: 9, backgroundColor: '#EFF9FC', borderRadius: 13, padding: 12 },
   infoText: { flex: 1, fontSize: 9, lineHeight: 14, color: '#7188AD' },
+  dropdown: { marginTop: 6, borderWidth: 1, borderColor: '#DDE8EE', borderRadius: 12, overflow: 'hidden', backgroundColor: '#fff', maxHeight: 260 },
+  dropItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: '#F0F5F8' },
+  dropText: { fontSize: 13, color: colors.navy, fontWeight: '500' },
 });

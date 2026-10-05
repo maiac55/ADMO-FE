@@ -1,28 +1,85 @@
-import React, { useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation';
 import { BottomNav } from '../components/BottomNav';
 import { colors } from '../theme/colors';
+import { getMedications } from '../api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Schedule'>;
 
-const days = [
-  { day: 'Mon', date: '8' }, { day: 'Tue', date: '9' }, { day: 'Wed', date: '10' },
-  { day: 'Thu', date: '11' }, { day: 'Fri', date: '12' }, { day: 'Sat', date: '13' }, { day: 'Sun', date: '14' },
-];
+const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const ICON_COLORS = ['#E8F7F5', '#EDEFFF', '#FFE8F0', '#E8F5FF', '#FFF4E8', '#F0FFE8', '#F8E8FF'];
 
-const meds = [
-  { time: '08:00', name: 'Paracetamol 500 mg', amount: '2 tablets', label: 'Morning medication', icon: 'medical-outline' as const, bg: '#E8F7F5' },
-  { time: '13:00', name: 'Ibuprofen 200 mg', amount: '1 tablet', label: 'Afternoon medication', icon: 'medical-outline' as const, bg: '#EDEFFF' },
-  { time: '20:00', name: 'Vitamin D3 1000 IU', amount: '1 pill', label: 'Evening medication', icon: 'medical-outline' as const, bg: '#FFE8F0' },
-  { time: '22:00', name: 'Melatonin 3 mg', amount: '1 tablet', label: 'Night medication', icon: 'medical-outline' as const, bg: '#E8F5FF' },
-];
+function buildWeek() {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
 
-export function ScheduleScreen({ navigation }: Props) {
-  const [selectedDay, setSelectedDay] = useState(0);
+  return DAY_LABELS.map((label, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return { day: label, date: String(d.getDate()), fullDate: d };
+  });
+}
+
+const WEEK = buildWeek();
+
+function todayIndex() {
+  const d = new Date().getDay();
+  return d === 0 ? 6 : d - 1;
+}
+
+function formatSubtitle(d: Date) {
+  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+export function ScheduleScreen({ navigation, route }: Props) {
+  const [selectedDay, setSelectedDay] = useState(route.params?.dayIndex ?? todayIndex());
+  const [medications, setMedications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const navigateTab = (tab: 'Home' | 'Medications' | 'History' | 'Profile') => navigation.navigate(tab);
+
+  const loadMedications = async () => {
+    try {
+      setLoading(true);
+      const data = await getMedications();
+      setMedications(data.medications || []);
+    } catch {
+      setMedications([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(useCallback(() => { loadMedications(); }, []));
+
+  const selectedDayLabel = DAY_LABELS[selectedDay];
+
+  // Collect all scheduled times for this day across active medications
+  const entries: { time: string; name: string; dose: string; label: string; bg: string }[] = [];
+  medications
+    .filter((m) => m.active !== false)
+    .forEach((med, mi) => {
+      const days: string[] = med.days || [];
+      if (days.length > 0 && !days.includes(selectedDayLabel)) return;
+      const times: { label: string; time: string; pills: number }[] = med.times || [];
+      times.forEach((t) => {
+        entries.push({
+          time: t.time,
+          name: med.name,
+          dose: `${t.pills} ${t.pills === 1 ? 'pill/tablet' : 'pills/tablets'}`,
+          label: t.label || '',
+          bg: ICON_COLORS[mi % ICON_COLORS.length],
+        });
+      });
+    });
+
+  entries.sort((a, b) => a.time.localeCompare(b.time));
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -32,13 +89,13 @@ export function ScheduleScreen({ navigation }: Props) {
             <Pressable onPress={() => navigation.goBack()}><Ionicons name="chevron-back" size={25} color={colors.teal} /></Pressable>
             <View style={styles.headerText}>
               <Text style={styles.title}>Today's schedule</Text>
-              <Text style={styles.subtitle}>Monday, 8 September</Text>
+              <Text style={styles.subtitle}>{formatSubtitle(WEEK[selectedDay].fullDate)}</Text>
             </View>
             <View style={styles.calendar}><Ionicons name="calendar-outline" size={21} color={colors.teal} /></View>
           </View>
 
           <View style={styles.daysRow}>
-            {days.map((item, index) => (
+            {WEEK.map((item, index) => (
               <Pressable key={item.day} onPress={() => setSelectedDay(index)} style={[styles.day, selectedDay === index && styles.selectedDay]}>
                 <Text style={[styles.dayName, selectedDay === index && styles.selectedText]}>{item.day}</Text>
                 <Text style={[styles.dayDate, selectedDay === index && styles.selectedText]}>{item.date}</Text>
@@ -46,21 +103,35 @@ export function ScheduleScreen({ navigation }: Props) {
             ))}
           </View>
 
-          <View style={styles.medList}>
-            {meds.map((med) => (
-              <Pressable key={med.time} style={styles.medCard} onPress={() => navigation.navigate('Medications')}>
-                <Text style={styles.time}>{med.time}</Text>
-                <View style={styles.verticalLine} />
-                <View style={[styles.medIcon, { backgroundColor: med.bg }]}><Ionicons name={med.icon} size={24} color={colors.teal} /></View>
-                <View style={styles.medText}>
-                  <Text style={styles.medName}>{med.name}</Text>
-                  <Text style={styles.amount}>{med.amount}</Text>
-                  <Text style={styles.medLabel}>{med.label}</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color="#7992B4" />
+          {loading ? (
+            <ActivityIndicator color={colors.teal} style={{ marginTop: 40 }} />
+          ) : entries.length === 0 ? (
+            <View style={styles.empty}>
+              <Ionicons name="calendar-outline" size={48} color="#C5D5E8" />
+              <Text style={styles.emptyText}>No medications scheduled{'\n'}for this day</Text>
+              <Pressable style={styles.addBtn} onPress={() => navigation.navigate('AddMedication')}>
+                <Text style={styles.addBtnText}>+ Add Medication</Text>
               </Pressable>
-            ))}
-          </View>
+            </View>
+          ) : (
+            <View style={styles.medList}>
+              {entries.map((entry, i) => (
+                <Pressable key={i} style={styles.medCard} onPress={() => navigation.navigate('Medications')}>
+                  <Text style={styles.time}>{entry.time}</Text>
+                  <View style={styles.verticalLine} />
+                  <View style={[styles.medIcon, { backgroundColor: entry.bg }]}>
+                    <Ionicons name="medical-outline" size={24} color={colors.teal} />
+                  </View>
+                  <View style={styles.medText}>
+                    <Text style={styles.medName}>{entry.name}</Text>
+                    <Text style={styles.amount}>{entry.dose}</Text>
+                    {entry.label ? <Text style={styles.medLabel}>{entry.label}</Text> : null}
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#7992B4" />
+                </Pressable>
+              ))}
+            </View>
+          )}
         </ScrollView>
         <BottomNav active="Home" onNavigate={navigateTab} />
       </View>
@@ -92,4 +163,8 @@ const styles = StyleSheet.create({
   medName: { color: colors.navy, fontSize: 12, fontWeight: '700' },
   amount: { color: '#7187A6', fontSize: 9, marginTop: 3 },
   medLabel: { color: '#8BA0BA', fontSize: 9, marginTop: 4 },
+  empty: { alignItems: 'center', marginTop: 60, gap: 12 },
+  emptyText: { color: '#8BA0BA', fontSize: 14, textAlign: 'center', lineHeight: 22 },
+  addBtn: { marginTop: 8, backgroundColor: colors.teal, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 20 },
+  addBtnText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });

@@ -23,6 +23,8 @@ import { BoxProfileScreen } from './src/screens/BoxProfileScreen';
 import { MedicationsScreen } from './src/screens/MedicationsScreen';
 import { AddMedicationScreen } from './src/screens/AddMedicationScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
+import { EditProfileScreen } from './src/screens/EditProfileScreen';
+import { ChangePasswordScreen } from './src/screens/ChangePasswordScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -62,6 +64,8 @@ export default function App() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Boxes" component={BoxesScreen} />
         <Stack.Screen name="BoxProfile" component={BoxProfileScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

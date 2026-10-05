@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = 'http://192.168.10.213:3000/api';
 
 type NavigateToLogin = () => void;
 let navigateToLogin: NavigateToLogin | null = null;
@@ -51,6 +51,7 @@ export async function register(name: string, email: string, password: string, da
   });
   await AsyncStorage.setItem('token', data.token);
   await AsyncStorage.setItem('user', JSON.stringify(data.user));
+  await AsyncStorage.setItem('pw', password);
   return data;
 }
 
@@ -61,6 +62,7 @@ export async function login(email: string, password: string) {
   });
   await AsyncStorage.setItem('token', data.token);
   await AsyncStorage.setItem('user', JSON.stringify(data.user));
+  await AsyncStorage.setItem('pw', password);
   return data;
 }
 

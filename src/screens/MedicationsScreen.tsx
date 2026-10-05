@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation';
 import { BottomNav } from '../components/BottomNav';
 import { colors } from '../theme/colors';
-import { getMedications } from '../api';
+import { getMedications, updateMedication } from '../api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Medications'>;
 type Filter = 'All' | 'Active' | 'Inactive';
@@ -29,6 +29,17 @@ export function MedicationsScreen({ navigation }: Props) {
 
   const navigateTab = (tab: 'Home' | 'Medications' | 'History' | 'Profile') => {
     if (tab !== 'Medications') navigation.navigate(tab);
+  };
+
+  const toggleActive = async (med: any) => {
+    const newActive = !med.active;
+    setMedications((prev) => prev.map((m) => m.id === med.id ? { ...m, active: newActive } : m));
+    try {
+      await updateMedication(med.id, { active: newActive });
+    } catch (err: any) {
+      setMedications((prev) => prev.map((m) => m.id === med.id ? { ...m, active: med.active } : m));
+      Alert.alert('Error', err.message);
+    }
   };
 
   const visible = medications.filter((m) =>
@@ -71,11 +82,15 @@ export function MedicationsScreen({ navigation }: Props) {
                   <View style={styles.medInfo}>
                     <View style={styles.nameRow}>
                       <Text style={styles.medName} numberOfLines={1}>{med.name}</Text>
-                      <View style={[styles.status, !med.active && styles.statusInactive]}>
+                      <TouchableOpacity
+                        style={[styles.status, !med.active && styles.statusInactive]}
+                        onPress={() => toggleActive(med)}
+                        activeOpacity={0.7}
+                      >
                         <Text style={[styles.statusText, !med.active && styles.statusTextInactive]}>
                           {med.active ? 'Active' : 'Inactive'}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                     <Text style={styles.dose}>{med.dose}</Text>
                     <View style={styles.scheduleRow}>

@@ -82,7 +82,7 @@ export function HomeScreen({ navigation }: Props) {
             </View>
           </View>
 
-          <WeekWheel />
+          <WeekWheel onDayPress={(i) => navigation.navigate('Schedule', { dayIndex: i })} />
 
           <View style={styles.scheduleCard}>
             <View style={styles.scheduleHeader}>
