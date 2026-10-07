@@ -43,9 +43,3 @@ All notable frontend changes to ADMO are documented here.
 - Profile architecture separated the logged-in account owner from individual ADMO Box users.
 - ADMO Box management is a child flow of Profile and therefore does not use the main bottom navigation.
 - Week wheel changed from an SVG concept to consistent image assets and later removed decorative day dots.
-
-### Architecture / backend handoff
-- Current box users, medication entries, schedules, history, and account information include frontend sample data.
-- Empty vs populated medication states are intended to be selected dynamically from persisted medication data.
-- QR and manual device codes currently continue through the frontend flow; backend validation will later verify real devices.
-- Intended relationship: one account can manage multiple ADMO Boxes, with one person profile associated with each box.
