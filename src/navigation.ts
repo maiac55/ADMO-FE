@@ -8,4 +8,5 @@ export type RootStackParamList = {
   BoxProfile: { id: string; name: string; age: string; note?: string; status: string };
   EditProfile: undefined;
   ChangePassword: undefined;
+  DispenserTimes: undefined;
 };

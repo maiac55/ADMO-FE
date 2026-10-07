@@ -25,6 +25,7 @@ import { AddMedicationScreen } from './src/screens/AddMedicationScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { EditProfileScreen } from './src/screens/EditProfileScreen';
 import { ChangePasswordScreen } from './src/screens/ChangePasswordScreen';
+import { DispenserTimesScreen } from './src/screens/DispenserTimesScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -66,6 +67,7 @@ export default function App() {
         <Stack.Screen name="BoxProfile" component={BoxProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+        <Stack.Screen name="DispenserTimes" component={DispenserTimesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

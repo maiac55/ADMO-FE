@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://192.168.10.213:3000/api';
+const BASE_URL = 'http://10.37.210.159:3000/api';
 
 type NavigateToLogin = () => void;
 let navigateToLogin: NavigateToLogin | null = null;
@@ -198,4 +198,18 @@ export async function changePassword(current_password: string, new_password: str
     method: 'PUT',
     body: JSON.stringify({ current_password, new_password }),
   });
+}
+
+// ── Dispenser (demo) ─────────────────────────────────────────────────────────
+
+export async function getDispenserSlots() {
+  return request('/dispenser/slots');
+}
+
+export async function saveDispenserSlots(times: { morning: string; noon: string; evening: string }) {
+  return request('/dispenser/slots', { method: 'PUT', body: JSON.stringify(times) });
+}
+
+export async function sendTestAlert() {
+  return request('/dispenser/test-alert', { method: 'POST' });
 }

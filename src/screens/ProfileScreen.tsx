@@ -64,6 +64,7 @@ export function ProfileScreen({ navigation }: Props) {
 
           <Text style={s.section}>SETTINGS</Text>
           <View style={s.card}>
+            <Row icon="alarm-outline" title="Dispenser times" sub="Morning · Noon · Evening" onPress={() => navigation.navigate('DispenserTimes')} />
             <Row icon="notifications-outline" title="Notifications" onPress={() => navigation.navigate('Notifications')} />
             <Row icon="help-circle-outline" title="Help & support" />
           </View>
