@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://10.37.210.159:3000/api';
+const BASE_URL = 'http://172.20.10.4:3000/api';
 
 type NavigateToLogin = () => void;
 let navigateToLogin: NavigateToLogin | null = null;
